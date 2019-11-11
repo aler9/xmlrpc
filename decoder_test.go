@@ -65,6 +65,7 @@ var unmarshalTests = []struct {
 	{[]interface{}{"A", "5"}, new(interface{}), "<value><array><data><value><string>A</string></value><value><string>5</string></value></data></array></value>"},
 	{[]interface{}{"A", int64(5)}, new(interface{}), "<value><array><data><value><string>A</string></value><value><int>5</int></value></data></array></value>"},
 	{[]interface{}{int64(5), nil, "A"}, new(interface{}), "<value><array><data><value><int>5</int></value><value></value><value><string>A</string></value></data></array></value>"},
+	{[]interface{}{int64(1), nil, []interface{}{"TCPROS", "172.17.0.4", int64(56423)}}, new(interface{}), "<value><array><data><value><i4>1</i4></value><value></value><value><array><data><value>TCPROS</value><value>172.17.0.4</value><value><i4>56423</i4></value></data></array></value></data></array></value>"},
 
 	// struct
 	{book{"War and Piece", 20}, new(*book), "<value><struct><member><name>Title</name><value><string>War and Piece</string></value></member><member><name>Amount</name><value><int>20</int></value></member></struct></value>"},
@@ -96,7 +97,7 @@ func Test_unmarshal(t *testing.T) {
 				t.Fatalf("unmarshal error:\nexpected: %v\n     got: %v", tt.value, v.Interface())
 			}
 			for i := 0; i < v.Len(); i++ {
-				if v.Index(i).Interface() != vv.Index(i).Interface() {
+				if !reflect.DeepEqual(v.Index(i).Interface(), vv.Index(i).Interface()) {
 					t.Fatalf("unmarshal error:\nexpected: %v\n     got: %v", tt.value, v.Interface())
 				}
 			}
